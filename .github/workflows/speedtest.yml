@@ -1,0 +1,43 @@
+name: Speed test
+
+# Manual run from the Actions tab: Actions → Speed test → Run workflow.
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: URL to download
+        required: true
+        default: https://upload.wikimedia.org/wikipedia/commons/3/3f/Fronalpstock_big.jpg
+      count:
+        description: Number of sequential requests
+        required: true
+        default: '10'
+
+permissions:
+  contents: read
+
+jobs:
+  speedtest:
+    name: Speed test · ${{ inputs.url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Run speedtest
+        shell: bash
+        # Inputs go through env, never interpolated into the script (prevents shell injection).
+        env:
+          URL: ${{ inputs.url }}
+          COUNT: ${{ inputs.count }}
+        run: |
+          node dist/cli.js "$URL" --count "$COUNT" | tee result.txt
+          {
+            echo "### Speed test: \`$URL\`"
+            echo '```'
+            cat result.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

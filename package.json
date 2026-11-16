@@ -1,0 +1,28 @@
+{
+  "name": "easy-speedtest",
+  "version": "1.0.0",
+  "description": "CLI: измеряет скорость скачивания по URL — N последовательных запросов, среднее время, общий объём, Мбит/с",
+  "type": "module",
+  "bin": {
+    "speedtest": "dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "pretest": "npm run build",
+    "test": "vitest run",
+    "start": "node dist/cli.js",
+    "prepare": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.0"
+  }
+}
